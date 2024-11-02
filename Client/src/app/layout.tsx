@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import Notification from "./components/notification/notification";
 
 export const metadata: Metadata = {
   title: "MaChatBot",
@@ -15,6 +16,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="w-screen h-screen">
         {children}
+        <Notification/>
       </body>
     </html>
   );

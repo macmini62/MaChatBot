@@ -7,7 +7,7 @@ import { FaFacebook, FaGoogle } from "react-icons/fa";
 import { RiRobot3Line } from "react-icons/ri";
 import { z } from "zod";
 import InputFields from "../../components/authComponents/InputFields";
-import { useRouter } from "next/router";
+import axiosInstance from "@/app/utils/axiosInstance";
 
 const schema = z.object({
   email: z.string().email({message: "Invalid email address!"}),
@@ -25,10 +25,14 @@ const LogInPage = () => {
   } = useForm<Inputs>({
     resolver: zodResolver(schema),
   });
-  // const router = useRouter();
-  const onSubmit = handleSubmit((data) => {
-    console.log(data);
-    // router.push("/");
+  
+  const onSubmit = handleSubmit(async (data) => {
+    console.log(data.email);
+
+    const user = await axiosInstance.get(`/user/login?email=${data.email}`);
+    if(user){
+      // console.log(user);
+    }
   });
 
   return (
