@@ -23,7 +23,7 @@ app.use(express.json());
 
 // call routes
 // const userRouter: userRoute = new userRoute();
-app.use("/user", userRoute);
+app.use("/app", userRoute);
 
 // Starts the application.
 (async () => {

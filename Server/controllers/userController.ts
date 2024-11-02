@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import User from "../database/users";
 import { v4 as uuidv4 } from "uuid";
+import jwt from "jsonwebtoken";
 
 export default class userController{
 
@@ -25,14 +26,33 @@ export default class userController{
 
   public async fetchUser(req: Request, res: Response): Promise<void> {
     try{
-      const { id } = req.params;
-      const user = await User.findById(id).exec();
+      const { email } = req.query;
+      console.log(req);
+      console.log(email);
+      const user = await User.findOne({ email: email })
       console.log(user);
 
       if(!user){
         res.status(404).send({ message: "No user found!" });
       }
-      res.status(200).json(user)
+
+      // create a jwt token
+      const token: string = jwt.sign(
+        {
+          userId: user?._id,
+          userEmail: user?.email
+        },
+        "secretkeyappearhere",
+        {
+          expiresIn: "2h"
+        }
+      );
+
+      res.status(200).json({
+        email: user?.email,
+        password: user?.password,
+        token: token
+      });
     }
     catch(e){
       console.log(e);

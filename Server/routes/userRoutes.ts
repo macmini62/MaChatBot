@@ -11,8 +11,8 @@ class userRouter{
   }
 
   private routes(){
-    userRouter.route.post("/signup", (req, res) => this.userController.createUser(req, res));
-    userRouter.route.get("/:id", (req, res) => this.userController.fetchUser(req, res));
+    userRouter.route.post("/user/signup", (req, res) => this.userController.createUser(req, res));
+    userRouter.route.get("/user/login", (req, res) => this.userController.fetchUser(req, res));
   }
 }
 
