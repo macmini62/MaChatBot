@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import mongoose from "mongoose";
 import userRoute from "./routes/userRoutes";
+import botRoute from "./routes/botRoutes";
 dotenv.config();
 
 if(!process.env.MONGODB_URL){
@@ -22,8 +23,7 @@ app.use(cors());
 app.use(express.json());
 
 // call routes
-// const userRouter: userRoute = new userRoute();
-app.use("/app", userRoute);
+app.use("/app", userRoute, botRoute);
 
 // Starts the application.
 (async () => {

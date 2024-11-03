@@ -3,7 +3,7 @@ import User from "../database/users";
 import { v4 as uuidv4 } from "uuid";
 import jwt from "jsonwebtoken";
 
-export default class userController{
+export default class UserController{
 
   public async createUser(req: Request, res: Response): Promise<void> {
     try{

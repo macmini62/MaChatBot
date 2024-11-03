@@ -1,12 +1,12 @@
 import { Router } from "express";
-import userController from "../controllers/userController";
+import UserController from "../controllers/userController";
 
 class userRouter{
   public static route: Router = Router();
-  public userController: userController;
+  public userController: UserController;
 
   constructor(){
-    this.userController = new userController();
+    this.userController = new UserController();
     this.routes();
   }
 
