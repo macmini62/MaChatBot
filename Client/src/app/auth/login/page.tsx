@@ -9,10 +9,8 @@ import { z } from "zod";
 import InputFields from "../../components/authComponents/InputFields";
 import axiosInstance from "@/app/utils/axiosInstance";
 import { redirect } from "next/navigation";
-import Notification from "@/app/components/notification/notification";
 import React, { Suspense, useEffect } from "react";
 import { message, notification, NotificationArgsProps } from "antd";
-import { type } from "os";
 
 const schema = z.object({
   email: z.string().email({message: "Invalid email address!"}),

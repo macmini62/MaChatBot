@@ -5,12 +5,60 @@ import { BsSendArrowUp } from "react-icons/bs";
 import { MdOutlineAddPhotoAlternate, MdOutlineEditNote } from "react-icons/md";
 import { RiRobot3Line } from "react-icons/ri";
 import { TbMicrophone } from "react-icons/tb";
-import AutoResizeTextarea from "./components/promptComponents/TextArea";
 import { BiLogOut } from "react-icons/bi";
 import Loading from "./loading";
 import DropDown from "./components/promptComponents/dropDown";
+import { FormEventHandler, useEffect, useRef, useState } from "react";
+import axiosInstance from "./utils/axiosInstance";
 
 const App = () => {
+  
+  const [content, setContent] = useState("");
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [promptResponse, setPromptResponse] = useState<string>("");
+
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = "56px"; // Reset height to original to shrink on backspacing
+      textarea.style.height = `${textarea.scrollHeight}px`; // Set height based on scroll height
+    }
+  }, [content]);
+
+  const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setContent(event.target.value);
+  };
+
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    let prompt: any = {
+      user_id: "3ae493ad-829b-41a0-ab89-932c737dde50",
+      promptRequest: content
+    }
+    // prompt = JSON.stringify(prompt);
+    let promptContent: any = JSON.stringify(content);
+    console.log(typeof(promptContent));
+    
+    const getResponse = async() => {
+      setLoading(load => {
+        load = !load;
+        return load;
+      });
+      const res: any = await axiosInstance.get(`/prompt?user_id=${prompt.user_id}}/&requestContent=${promptContent}`);
+
+      return res;
+    }
+
+    const res = await getResponse();
+    if(res){
+      setPromptResponse(res.data.response);
+      setLoading(load => {
+        load = !load;
+        return load;
+      });
+    }
+  }
 
   return (
     <div className="w-full h-full flex justify-center items-center">
@@ -102,20 +150,24 @@ const App = () => {
               <div className="flex gap-2">
                 <RiRobot3Line className="w-8 h-8 my-2 p-1 border border-white rounded-full"/>
                 {/* Response Query */}
-                <Loading/>
-                {/* <div className="w-full p-2 bg-lightBlack rounded-md opacity-90 my-2 text-wrap">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                  Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
-                  Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. 
-                  Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                </div> */}
+                { loading ? 
+                  <Loading/>
+                  :
+                  <div className="w-full p-2 bg-lightBlack rounded-md opacity-90 my-2 text-wrap">{promptResponse}</div>
+                }
               </div>
               <hr className="w-full my-4 opacity-20"/>
             </div>
           </div>
           {/* Input section */}
-          <form className="w-full flex flex-col items-center justify-center my-4">
-            <AutoResizeTextarea/>
+          <form onSubmit={onSubmit} className="w-full flex flex-col items-center justify-center my-4">
+            <textarea
+              ref={textareaRef}
+              value={content}
+              onChange={handleChange} // Hide scrollbar and disable manual resizing
+              placeholder="Type something here..."
+              className="w-1/2 h-14 bg-transparent outline-none border border-white text-white overflow-hidden resize-none rounded-xl px-4 py-3.5"
+            />
             <div className="w-1/2 flex justify-between items-center p-2">
               {/* Media input section */}
               <div className="h-10 w-max flex gap-4 justify-center items-center">
@@ -132,3 +184,4 @@ const App = () => {
 }
 
 export default App;
+
