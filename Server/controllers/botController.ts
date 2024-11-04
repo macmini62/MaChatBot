@@ -6,9 +6,8 @@ import Gemini from "../middlewares/aiMiddleware";
 export default class BotController{
   public async requestResponse(req: Request, res: Response): Promise<void> {
     try{
-      const { promptRequest, user_id } = req.body;
-      console.log(promptRequest);
-      console.log(user_id);
+      const user_id: any = req.query.user_id;
+      const promptRequest: any = req.query.requestContent;
 
       // get prompt results
       const requestResponse = async () => {
@@ -18,6 +17,7 @@ export default class BotController{
         return results;
       }
       const promptResponse = await requestResponse();
+      console.log(promptResponse);
       
       if(promptResponse){
         try{  
@@ -30,6 +30,7 @@ export default class BotController{
           });
 
           res.status(201).json({
+            user_id: user_id,
             res_id: prompt_id,
             response: promptResponse
           });

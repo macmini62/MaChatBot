@@ -11,7 +11,7 @@ class BotRouter{
   }
 
   private routes(){
-    BotRouter.route.get("/user/prompt", (req, res) => this.botController.requestResponse(req, res));
+    BotRouter.route.get("/prompt", (req, res) => this.botController.requestResponse(req, res));
   }
 }
 
