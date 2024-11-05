@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Notification from "./components/notification/notification";
 
 export const metadata: Metadata = {
   title: "MaChatBot",

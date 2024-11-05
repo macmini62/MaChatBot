@@ -50,7 +50,7 @@ const LogInPage = () => {
           placement: "bottomLeft",
           message: "Logged In successfully.",
           description: "",
-          duration: null,
+          duration: 3,
         });
         redirect("/");
       }
