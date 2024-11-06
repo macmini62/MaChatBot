@@ -49,6 +49,7 @@ export default class UserController{
       );
 
       res.status(200).json({
+        userId: user?._id,
         email: user?.email,
         password: user?.password,
         token: token
