@@ -14,5 +14,5 @@ const userSchema: Schema = new Schema<user>({
   password: String
 });
 
-const User = model("User", userSchema);
+const User = model<user>("User", userSchema);
 export default User;

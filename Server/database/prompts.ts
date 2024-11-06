@@ -16,5 +16,5 @@ const promptSchema: Schema = new Schema<prompt>({
   date: Date
 });
 
-const Prompt = model("Prompt", promptSchema);
+const Prompt = model<prompt>("Prompt", promptSchema);
 export default Prompt;
