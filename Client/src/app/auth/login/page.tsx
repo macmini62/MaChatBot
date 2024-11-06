@@ -44,7 +44,7 @@ const LogInPage = () => {
   const onSubmit = handleSubmit(async (data) => {
     const user = await axiosInstance.get(`/user/login?email=${data.email}`);
     if(user){
-      const { email, password, token } = user.data;
+      const { userId, email, password, token } = user.data;
       if(password === data.password){
         api["success"]({
           placement: "bottomLeft",
@@ -52,7 +52,7 @@ const LogInPage = () => {
           description: "",
           duration: 3,
         });
-        redirect("/");
+        redirect(`/${userId}`);
       }
     }
   });

@@ -13,7 +13,7 @@ import axiosInstance from "../utils/axiosInstance";
 import DropDown from "../components/promptComponents/dropDown";
 import Loading from "../loading";
 
-const HomePage = () => {
+const HomePage = ({ user_id }:{ user_id:any }) => {
   
   const [content, setContent] = useState<string>("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);

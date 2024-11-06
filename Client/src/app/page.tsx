@@ -1,9 +1,9 @@
-import HomePage from "./home/page"
+import { redirect } from "next/navigation";
 
 const Page = () => {
   return (
     <>
-      <HomePage/>
+      {redirect("/auth/login")}
     </>
   )
 }
