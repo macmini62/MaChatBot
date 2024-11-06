@@ -19,3 +19,34 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.ant-upload-list-item-container {
+  width: 60px !important;
+  height: 60px !important;
+}
+
+.ant-upload{
+  width: max-content !important;
+  height: max-content !important;
+}
+
+.ant-upload-list-item.ant-upload-list-item-uploading {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+.ant-upload-list-item-progress {
+  width: 90% !important;
+  height: 10px !important;
+  padding-top: 10px !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+.ant-progress .ant-progress-bg{
+  padding-top: 5px !important;
+  background-color: white !important;
+}
+
