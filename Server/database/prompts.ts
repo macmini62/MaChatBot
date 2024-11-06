@@ -1,9 +1,17 @@
 import { Schema, model } from "mongoose";
 
-const promptSchema: Schema = new Schema({
+interface prompt {
+  _id: string;
+  user_id: string;
+  request: string;
+  response: string;
+  date: Date
+};
+
+const promptSchema: Schema = new Schema<prompt>({
   _id: String,
   user_id: String,
-  prompt: String,
+  request: String,
   response: String,
   date: Date
 });
