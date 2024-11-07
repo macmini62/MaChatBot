@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import Prompt from "../database/prompts";
 import { v4 as uuidv4 } from "uuid";
-import Gemini from "../middlewares/aiMiddleware";
+import Gemini from "../middlewares/geminiMiddleware";
 
 export default class PromptController{
   public async requestResponse(req: Request, res: Response): Promise<void> {
