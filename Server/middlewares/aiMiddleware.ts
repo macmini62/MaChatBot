@@ -8,7 +8,7 @@ export default class Gemini{
   constructor(){
     this.API = process.env.GEMINI_API_KEY;
     this.generate;
-  }
+  };
 
   public generate = async (prompt: string) => {
     const genAI = new GoogleGenerativeAI(this.API);

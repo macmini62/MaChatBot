@@ -1,7 +1,7 @@
 import { Router } from "express";
 import UserController from "../controllers/userController";
 
-class userRouter{
+class UserRouter{
   public static route: Router = Router();
   public userController: UserController;
 
@@ -11,10 +11,10 @@ class userRouter{
   }
 
   private routes(){
-    userRouter.route.post("/user/signup", (req, res) => this.userController.createUser(req, res));
-    userRouter.route.get("/user/login", (req, res) => this.userController.fetchUser(req, res));
+    UserRouter.route.post("/user/signup", (req, res) => this.userController.createUser(req, res));
+    UserRouter.route.get("/user/login", (req, res) => this.userController.fetchUser(req, res));
   }
 }
 
-new userRouter();
-export default userRouter.route;
+new UserRouter();
+export default UserRouter.route;
