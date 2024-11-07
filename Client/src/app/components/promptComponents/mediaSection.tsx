@@ -42,8 +42,6 @@ const MediaSection = () => {
     </button>
   );
 
-  console.log(fileList);
-
   return (
     <div className="w-full flex flex-col gap-4">
       <div className="w-full flex justify-between items-center p-2">

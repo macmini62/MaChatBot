@@ -40,11 +40,11 @@ const LogInPage = () => {
       : false,
   });
   
-  // Fetch an authorize user.
+  // Fetch an authorize user
   const onSubmit = handleSubmit(async (data) => {
     const user = await axiosInstance.get(`/user/login?email=${data.email}`);
     if(user){
-      const { userId, email, password, token } = user.data;
+      const { password, token } = user.data;
       if(password === data.password){
         api["success"]({
           placement: "bottomLeft",
@@ -52,7 +52,20 @@ const LogInPage = () => {
           description: "",
           duration: 3,
         });
-        redirect(`/${userId}`);
+
+        // Creates a session for the user
+        const session = await axiosInstance.post(`/user/session?auth_token=${token}`);
+        if(session){
+          redirect(`/${session.data._id}`);
+        }
+      }
+      else{
+        api["error"]({
+          placement: "bottomLeft",
+          message: "Please check your password!",
+          description: "",
+          duration: 3,
+        });
       }
     }
   });
