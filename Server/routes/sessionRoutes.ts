@@ -12,6 +12,7 @@ class SessionRouter {
 
   private routes(){
     SessionRouter.route.post("/user/session", (req, res) => this.sessionController.createSession(req, res));
+    SessionRouter.route.get("/user/session/:session_id", (req, res) => this.sessionController.fetchSessionUser(req, res));
   }
 };
 

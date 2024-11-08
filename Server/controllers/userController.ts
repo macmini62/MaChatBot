@@ -39,17 +39,16 @@ export default class UserController{
       const auth: AuthMiddleware = new AuthMiddleware();
       const token = await auth.encodeAuth(user);
 
-      if(token){
-        res.status(200).json({
-          _id: user?._id,
-          email: user?.email,
-          password: user?.password,
-          token: token
-        });
-      }
-      else{
+      if(!token){
         throw new Error();
       }
+      
+      res.status(200).json({
+        _id: user?._id,
+        email: user?.email,
+        password: user?.password,
+        token: token
+      });
     }
     catch(e){
       console.log(e);

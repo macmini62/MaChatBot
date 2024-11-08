@@ -10,7 +10,7 @@ const items: MenuProps['items'] = [
   }
 ];
 
-const DropDown: React.FC = () => (
+const DropDown: React.FC<{ handleDeleteChat: any }> = ({ handleDeleteChat }) => (
   <Dropdown menu={{ items }} trigger={['click']} className="group-hover:block hidden">
     <div onClick={(e) => e.preventDefault()}>
       <Space>

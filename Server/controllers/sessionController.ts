@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { v4 as uuidv4 } from "uuid";
 import Session from "../database/sessions";
 import AuthMiddleware from "../middlewares/authMiddleware";
+import User from "../database/users";
 
 export default class SessionController {
   public createSession = async(req: Request, res: Response): Promise<void> => {
@@ -34,9 +35,9 @@ export default class SessionController {
     }
   }
 
-  private sessionDuration = async(duration: string): Promise<any> => {
+  // private sessionDuration = async(duration: string): Promise<any> => {
     
-  }
+  // }
 
   public fetchSession = async(id: string): Promise<any> => {
     try{
@@ -47,6 +48,37 @@ export default class SessionController {
     }
     catch(e){
       console.log(e);
+    }
+  }
+
+  public fetchSessionUser = async(req: Request, res: Response): Promise<void> => {
+    try{
+      const { session_id } = req.params;
+
+      const session = await Session.findById({ _id: session_id });
+      if(!session){
+        res.status(404).send({ message: "Session has not been found!" });
+      }
+
+      const user_id = session?.user_id;
+      if(!user_id){
+        res.status(404).send({ message: "User for the session not found!" });
+      }
+
+      const user = await User.findById({ _id: user_id });
+      if(!user){
+        res.status(404).send({ message: "User cannot be found!" });
+      }
+
+      res.status(200).json({
+        _id: user?._id,
+        fullName: user?.fullName
+      });
+
+    }
+    catch(e){
+      console.log(e);
+      res.status(500).send({ message: "Server Error!" });
     }
   }
 }

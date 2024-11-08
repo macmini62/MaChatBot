@@ -7,7 +7,9 @@ export default class PromptController{
   public async requestResponse(req: Request, res: Response): Promise<void> {
     try{
       const user_id: any = req.query.user_id;
-      const promptRequest: any = req.query.requestContent;
+      const chat_id: any = req.query.chat_id;
+      const promptRequest: any = req.query.promptRequest;
+      console.log(req);
 
       // get prompt results
       const requestResponse = async () => {
@@ -25,13 +27,15 @@ export default class PromptController{
           await Prompt.create({
             _id: prompt_id,
             user_id: user_id,
+            chat_id: chat_id,
             prompt: promptRequest,
             response: promptResponse
           });
 
           res.status(201).json({
+            _id: prompt_id,
             user_id: user_id,
-            res_id: prompt_id,
+            chat_id: chat_id,
             response: promptResponse
           });
         }

@@ -9,8 +9,8 @@ import { z } from "zod";
 import InputFields from "../../components/authComponents/InputFields";
 import axiosInstance from "@/app/utils/axiosInstance";
 import { redirect } from "next/navigation";
-import React, { Suspense, useEffect } from "react";
-import { message, notification, NotificationArgsProps } from "antd";
+import React from "react";
+import { notification } from "antd";
 
 const schema = z.object({
   email: z.string().email({message: "Invalid email address!"}),
@@ -55,6 +55,7 @@ const LogInPage = () => {
 
         // Creates a session for the user
         const session = await axiosInstance.post(`/user/session?auth_token=${token}`);
+        console.log(session);
         if(session){
           redirect(`/${session.data._id}`);
         }

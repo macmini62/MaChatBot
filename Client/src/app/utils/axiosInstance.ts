@@ -3,7 +3,8 @@ import axios from 'axios';
 const axiosInstance = axios.create({
   baseURL: 'http://localhost:3001/app',
   timeout: 10000,
-  headers: { 'Content-Type': 'application/json' }
+  headers: { 'Content-Type': 'application/json' },
+  data: {}
 });
 
 // Add a request interceptor
@@ -11,6 +12,7 @@ axiosInstance.interceptors.request.use(
   function (config) {
     // Do something before the request is sent
     const token = localStorage.getItem('authToken'); // Retrieve auth token from localStorage
+    console.log("Token", token);
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -26,7 +28,6 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   function (response) {
     // Do something with the response data
-    console.log('Response:', response);
     return response;
   },
   function (error) {
