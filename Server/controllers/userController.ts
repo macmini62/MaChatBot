@@ -1,8 +1,10 @@
 import { Request, Response } from "express";
 import User from "../database/users";
 import { v4 as uuidv4 } from "uuid";
+import jwt from "jsonwebtoken";
+import AuthMiddleware from "../middlewares/authMiddleware";
 
-export default class userController{
+export default class UserController{
 
   public async createUser(req: Request, res: Response): Promise<void> {
     try{
@@ -25,14 +27,28 @@ export default class userController{
 
   public async fetchUser(req: Request, res: Response): Promise<void> {
     try{
-      const { id } = req.params;
-      const user = await User.findById(id).exec();
+      const email: any = req.query.email;
+      const user = await User.findOne({ email: email });
       console.log(user);
 
       if(!user){
         res.status(404).send({ message: "No user found!" });
       }
-      res.status(200).json(user)
+
+      // Generate a JWT token
+      const auth: AuthMiddleware = new AuthMiddleware();
+      const token = await auth.encodeAuth(user);
+
+      if(!token){
+        throw new Error();
+      }
+      
+      res.status(200).json({
+        _id: user?._id,
+        email: user?.email,
+        password: user?.password,
+        token: token
+      });
     }
     catch(e){
       console.log(e);

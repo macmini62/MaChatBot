@@ -8,6 +8,8 @@ import { RiRobot3Line } from "react-icons/ri";
 import { z } from "zod";
 import InputFields from "../../components/authComponents/InputFields";
 import { useState } from "react";
+import axiosInstance from "@/app/utils/axiosInstance";
+import { redirect } from "next/navigation";
 
 const schema = z.object({
   fullName: z.string().min(3, {message: "Full Name must be more than 3 characters long!"}).toLowerCase(),
@@ -27,10 +29,14 @@ const SignUpPage = () => {
   } = useForm<Inputs>({
     resolver: zodResolver(schema),
   });
-  // const router = useRouter();
-  const onSubmit = handleSubmit((data) => {
-    console.log(data)
-    // router.push("/");
+
+  const onSubmit = handleSubmit(async (data) => {
+    console.log(data);
+    const createUser = await axiosInstance.post("/user/signup", data);
+
+    if(createUser.status === 201){
+      redirect("/auth/login");
+    }
   });
 
   // Handles the checkbox on the form.
@@ -41,7 +47,6 @@ const SignUpPage = () => {
       return check;
     });
   }
-
 
   return (
     <div className="flex justify-center items-center w-full h-full">

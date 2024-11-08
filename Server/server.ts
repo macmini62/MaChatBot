@@ -1,9 +1,12 @@
 import express, { Application } from "express";
 import dotenv from "dotenv";
+dotenv.config();
 import cors from "cors";
 import mongoose from "mongoose";
 import userRoute from "./routes/userRoutes";
-dotenv.config();
+import promptRoute from "./routes/promptRoutes";
+import sessionRoute from "./routes/sessionRoutes";
+import chatRoute from "./routes/chatRoutes";
 
 if(!process.env.MONGODB_URL){
   throw new Error("MongoDB url is not provided!");
@@ -22,8 +25,7 @@ app.use(cors());
 app.use(express.json());
 
 // call routes
-// const userRouter: userRoute = new userRoute();
-app.use("/user", userRoute);
+app.use("/app", userRoute, promptRoute, sessionRoute, chatRoute);
 
 // Starts the application.
 (async () => {
