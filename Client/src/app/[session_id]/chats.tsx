@@ -3,15 +3,17 @@
 import { RiRobot3Line } from "react-icons/ri";
 import Loading from "../components/promptComponents/loading";
 import MediaSection from "../components/promptComponents/mediaSection";
+import { useEffect, useState } from "react";
 
-const Chats = ({
+const Chat = ({
   displayResponse,
   loading,
   onSubmit,
   content,
   handleChange,
   textareaRef,
-  prompt
+  // fetchResponse,
+  prompts
 }:{
   displayResponse: any,
   loading: boolean,
@@ -19,30 +21,36 @@ const Chats = ({
   content: string,
   handleChange: any,
   textareaRef: React.RefObject<HTMLTextAreaElement>,
-  prompt: any
+  // fetchResponse: boolean,
+  prompts: any
 }) => {
+  
   return (
       <div style={displayResponse.parentStyle} className="w-[calc(100%-348px)] h-[calc(100%-32px)] flex flex-col justify-center items-center border border-white rounded-md absolute right-4">
         {/* Output section */}
         { displayResponse.show &&
           <div style={displayResponse.outputStyle} className="hidden w-3/4 h-full p-4 my-4 overflow-auto">
-            <div>
-              {/* Prompted Query. */}
-              <div className="flex gap-2 items-center justify-center">
-                <span className="w-8 flex items-center justify-center border border-white rounded-full text-white text-lg font-semibold capitalize">J</span>
-                <div className=" w-full p-2 bg-lightBlack rounded-md opacity-75 my-2">{prompt.promptRequest}</div>
-              </div>
-              <div className="flex gap-2">
-                <RiRobot3Line className="w-8 h-8 my-2 p-1 border border-white rounded-full"/>
-                {/* Response Query */}
-                { loading ? 
-                  <Loading/>
-                  :
-                  <div className="w-full p-2 bg-lightBlack rounded-md opacity-90 my-2 text-wrap">{prompt.promptResponse}</div>
-                }
-              </div>
-              <hr className="w-full my-4 opacity-20"/>
-            </div>
+            {
+              prompts.map((prompt: any, index: number) => (
+                <div key={index}>
+                  {/* Prompted Query. */}
+                  <div className="flex gap-2 items-center justify-center">
+                    <span className="w-8 flex items-center justify-center border border-white rounded-full text-white text-lg font-semibold capitalize">J</span>
+                    <div className=" w-full p-2 bg-lightBlack rounded-md opacity-75 my-2">{prompt.promptRequest}</div>
+                  </div>
+                  <div className="flex gap-2">
+                    <RiRobot3Line className="w-8 h-8 my-2 p-1 border border-white rounded-full"/>
+                    {/* Response Query */}
+                    { loading ? 
+                      <Loading/>
+                      :
+                      <div className="w-full p-2 bg-lightBlack rounded-md opacity-90 my-2 text-wrap">{prompt.promptResponse}</div>
+                    }
+                  </div>
+                  <hr className="w-full my-4 opacity-20"/>
+                </div>
+              ))
+            }
           </div>
         }
         {/* Input section */}
@@ -61,4 +69,4 @@ const Chats = ({
   )
 };
 
-export default Chats;
+export default Chat;

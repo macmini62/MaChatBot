@@ -5,7 +5,7 @@ import { notification } from "antd";
 import React from "react";
 import axiosInstance from "../utils/axiosInstance";
 import SideBar from "./sideBar";
-import Prompts from "./chats";
+import Chat from "./chats";
 
 const Main = ({ session_id }:{ session_id: any }) => {
 
@@ -21,14 +21,16 @@ const Main = ({ session_id }:{ session_id: any }) => {
   const [content, setContent] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [prompt, setPrompt] = useState<any>({
-      promptRequest: "",
-      promptResponse: ""
+    promptRequest: "",
+    promptResponse: {}
   });
   const [displayResponse, setDisplayResponse] = useState<any>({
       show: false,
       parentStyle: {},
       outputStyle: {}
   });
+  const [requesting, setRequesting] = useState<boolean>(false);
+  const [prompts, setPrompts] = useState<any>([]);
 
   // Updates the users' details upon login
   const fetchUserData = async({ session_id }:{ session_id: object }): Promise<any> => {
@@ -76,7 +78,11 @@ const Main = ({ session_id }:{ session_id: any }) => {
       textarea.style.height = "56px"; // Reset height to original to shrink on backspacing
       textarea.style.height = `${textarea.scrollHeight}px`; // Set height based on scroll height
     }
+    setPrompt((p: any) => {
+      return{ promptRequest: content, promptResponse: "" };
+    })
   }, [content]);
+
   const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setContent(event.target.value);
   };
@@ -99,20 +105,12 @@ const Main = ({ session_id }:{ session_id: any }) => {
         return {
           ...display,
           show: true,
-          parentStyle: {
-            "justifyItems": "between",
-          },
-          outputStyle: {
-            "display": "block"
-          }
+          parentStyle: { "justifyItems": "between" },
+          outputStyle: { "display": "block" }
         }
       });
 
-      setContent("");
-      
-      setPrompt((p: any) => {
-        return { ...p, promptRequest: content };
-      });
+      setRequesting(true);
       
       const getResponse = async() => {
         try{
@@ -122,9 +120,14 @@ const Main = ({ session_id }:{ session_id: any }) => {
           });
 
           const response: any = await axiosInstance.get(`/prompt?user_id=${userData.user_id}&chat_id=${chats[0]._id}&promptRequest=${content}`);
-          const res = response.data.response;
-          console.log(res);
-          return res;
+          console.log("Response:",response);
+
+          if(response.status === 201){
+            const response: any = await axiosInstance.get(`/prompt/${chats[0]._id}`);
+            console.log(response);
+
+            return response.data;
+          }
         }
         catch(e){
           console.log(e);
@@ -141,16 +144,20 @@ const Main = ({ session_id }:{ session_id: any }) => {
         }
       }
 
-      const res = await getResponse();
-      if(res){
+      const incomingPrompts = await getResponse();
+      if(incomingPrompts){
+        setPrompts([...incomingPrompts]);
+
         setPrompt((p: any) => {
-          return { ...p, promptResponse: res };
-        });
-        setLoading(load => {
-          load = !load;
-          return load;
+          return {
+            promtRequest: incomingPrompts[0].request,
+            promptResponse: incomingPrompts[0].response
+          };
         });
       }
+      console.log(prompt)
+      
+      setContent("");
     }
   };
 
@@ -170,14 +177,15 @@ const Main = ({ session_id }:{ session_id: any }) => {
            handleDeleteChat={() => handleDeleteChat()}
           />
           {/* Main Section */}
-          <Prompts
+          <Chat
             displayResponse={displayResponse}
             loading={loading}
             onSubmit={onSubmit}
             content={content}
             handleChange={handleChange}
             textareaRef={textareaRef}
-            prompt={prompt}
+            // fetchResponse={requesting}
+            prompts={prompts}
           />
         </div>
       </div>

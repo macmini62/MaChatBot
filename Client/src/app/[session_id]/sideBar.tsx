@@ -12,8 +12,6 @@ const SideBar = ({
   handleDeleteChat: any
 }) => {
 
-  console.log(chats);
-
   return (
     <div className="w-[300px] h-[calc(100%-32px)] absolute flex flex-col justify-between left-4 top-4 border border-slate-300 rounded-md">
       <div className="w-full flex flex-col items-center">
