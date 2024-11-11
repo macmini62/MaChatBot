@@ -54,7 +54,7 @@ const LogInPage = () => {
         });
 
         // Creates a session for the user
-        const session = await axiosInstance.post(`/user/session?auth_token=${token}`);
+        const session = await axiosInstance.post(`/session?auth_token=${token}`);
         console.log(session);
         if(session){
           redirect(`/${session.data._id}`);
