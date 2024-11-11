@@ -25,7 +25,7 @@ export default class SessionController {
         res.status(501).send({ message: "Failed to create a session for the user!" });
       }
 
-      const session = await this.fetchSession(id);
+      const session = await this.session(id);
 
       res.status(201).json(session);
     }
@@ -35,11 +35,7 @@ export default class SessionController {
     }
   }
 
-  // private sessionDuration = async(duration: string): Promise<any> => {
-    
-  // }
-
-  public fetchSession = async(id: string): Promise<any> => {
+  private session = async(id: string): Promise<any> => {
     try{
       const session = await Session.findById({ _id: id });
       console.log("Session:", session);
@@ -49,7 +45,18 @@ export default class SessionController {
     catch(e){
       console.log(e);
     }
-  }
+  };
+
+  public fetchSession = async(req: Request, res: Response): Promise<void> => {
+    const { session_id } = req.params;
+
+    const session: any = await this.session(session_id);
+    if(!session){
+      res.status(404).send({ message: "Session not found!" });
+    }
+
+    res.status(200).json(session);
+  };
 
   public fetchSessionUser = async(req: Request, res: Response): Promise<void> => {
     try{
