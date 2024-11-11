@@ -7,10 +7,12 @@ import { useEffect, useState } from "react";
 
 const SideBar = ({
   userData,
-  handleDeleteChat
+  handleDeleteChat,
+  handleLogOut,
 }:{
   userData: any,
-  handleDeleteChat: any
+  handleDeleteChat: any,
+  handleLogOut: any
 }) => {
 
   const [chats, setChats] = useState<any>([]);
@@ -65,7 +67,7 @@ const SideBar = ({
           </span>
           <p className="capitalize">{profile.fullName}</p>
         </div>
-        <BiLogOut className="w-8 h-8 cursor-pointer"/>
+        <BiLogOut onClick={handleLogOut} className="w-8 h-8 cursor-pointer"/>
       </div>
     </div>
   )

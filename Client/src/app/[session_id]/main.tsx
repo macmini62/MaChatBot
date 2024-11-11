@@ -7,6 +7,7 @@ import axiosInstance from "../utils/axiosInstance";
 import SideBar from "./sideBar";
 import Chat from "./chats";
 import { v4 as uuidv4 } from "uuid";
+import { redirect } from "next/navigation";
 
 const Main = ({ session_id }:{ session_id: any }) => {
 
@@ -93,7 +94,7 @@ const Main = ({ session_id }:{ session_id: any }) => {
     fetchUserData(session_id);
   }, []);
 
-  console.log("Session data", session);
+  // console.log("Session data", session);
   
   // TextArea handler.
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -164,15 +165,42 @@ const Main = ({ session_id }:{ session_id: any }) => {
       }
       catch(e) {
         console.log(e);
+        setLoading({
+          ...loading, load: false
+        });
+        setNotification((not: any) => {
+          not.count = not.count + 1;
+          return{
+            ...not,
+            display: true,
+            type: "error",
+            message: "Error fetching response",
+            description: "Please check your connection in order to continue."
+          }
+        });
       }
     }
   };
 
-  console.log("chatPrompts", chatPrompts);
+  // console.log("chatPrompts", chatPrompts);
 
   // Handles delete of chats
-  const handleDeleteChat = async(): Promise<any> => {
+  const handleDeleteChat = () => {
       console.log("yellow");
+  }
+
+  const handleLogOut = () => {
+    setSession({
+      _id: "",
+      user: {
+        _id: "",
+        fullName: "",
+        chats: []
+      },
+      active: false
+    });
+
+    redirect("/");
   }
 
   return (
@@ -191,6 +219,7 @@ const Main = ({ session_id }:{ session_id: any }) => {
             <SideBar
               userData={session.user}
               handleDeleteChat={() => handleDeleteChat()}
+              handleLogOut={() => handleLogOut()}
             />
           }
           {/* Main Section */}
