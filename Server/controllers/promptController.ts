@@ -1,12 +1,11 @@
 import { Request, Response } from "express";
 import Prompt from "../database/prompts";
-import { v4 as uuidv4 } from "uuid";
 import Gemini from "../middlewares/geminiMiddleware";
 
 export default class PromptController{
   public requestResponse = async(req: Request, res: Response): Promise<void> => {
     try{
-      const user_id: any = req.query.user_id;
+      const prompt_id: any = req.query.prompt_id;
       const chat_id: any = req.query.chat_id;
       const promptRequest: any = req.query.promptRequest;
       console.log(req);
@@ -24,8 +23,7 @@ export default class PromptController{
       if(promptResponse){
         try{
           const prompt = await Prompt.create({
-            _id: uuidv4(),
-            user_id: user_id,
+            _id: prompt_id,
             chat_id: chat_id,
             request: promptRequest,
             response: promptResponse,
@@ -36,7 +34,7 @@ export default class PromptController{
             res.status(401).send({ message: "Failed to generate a response!" });
           }
 
-          res.status(201).send({ message: "Response generated successfully" });
+          res.status(200).json(prompt);
         }
         catch(e){
           console.log(e);
