@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react";
-import { notification } from "antd";
+import Notification from "../components/notification/notification";
 import React from "react";
 import axiosInstance from "../utils/axiosInstance";
 import SideBar from "./sideBar";
@@ -33,6 +33,7 @@ const Main = ({ session_id }:{ session_id: any }) => {
     item_id: "",
     load: false
   });
+  const [notification, setNotification] = useState<any>({ count: 0 });
 
   // Fetches the session data, user's data and chats data after login using session id.
   const fetchUserData = async({ session_id }:{ session_id: object }): Promise<any> => {
@@ -62,11 +63,15 @@ const Main = ({ session_id }:{ session_id: any }) => {
             }
           }
         }else{
-          api["error"]({
-            placement: "bottomLeft",
-            message: "Session Expired!",
-            description: "Please login again to restart the session.",
-            duration: 3,
+          setNotification((not: any) => {
+            not.count = not.count + 1;
+            return{
+              ...not,
+              display: true,
+              type: "error",
+              message: "Session Expired",
+              description: "Log In to restart the session."
+            }
           });
           throw new Error("Session expired!");
         }
@@ -90,17 +95,6 @@ const Main = ({ session_id }:{ session_id: any }) => {
 
   console.log("Session data", session);
   
-  // Notification handler.
-  const [enabled, setEnabled] = React.useState(true);
-  const [threshold, setThreshold] = React.useState(2);
-  const [api, contextHolder] = notification.useNotification({
-    stack: enabled
-      ? {
-          threshold,
-        }
-      : false,
-  });
-  
   // TextArea handler.
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   useEffect(() => {
@@ -119,44 +113,58 @@ const Main = ({ session_id }:{ session_id: any }) => {
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    setDisplay({
-      show: true,
-      parentStyle: { justifyContent: "between" },
-      outputStyle: { display: "block" }
-    });
-
-    try {
-      setInputContent("");
-
-      const newPrompt_id: string = uuidv4();
-      setChatPrompts((p: any) => {
-        const new_p: any = {
-          _id: newPrompt_id,
-          request: inputContent,
-          response: ""
-        };
+    if(inputContent === ""){
+      setNotification((not: any) => {
+        not.count = not.count + 1;
+        return{
+          ...not,
+          display: true,
+          type: "error",
+          message: "No input",
+          description: "Please input a value to continue."
+        }
+      });
+    }
+    else{
+      setDisplay({
+        show: true,
+        parentStyle: { justifyContent: "between" },
+        outputStyle: { display: "block" }
+      });
   
-        return[...p, new_p];
-      });
-      setLoading({
-        item_id: newPrompt_id,
-        load: true
-      });
-
-      // Fetches the response.
-      const generateResponse = await axiosInstance.get(`/prompt?prompt_id=${newPrompt_id}&chat_id=${session.user.chats[0]._id}&promptRequest=${inputContent}`);
-      if(generateResponse){
+      try {
+        setInputContent("");
+  
+        const newPrompt_id: string = uuidv4();
         setChatPrompts((p: any) => {
-          const updatedP = p.map((e: any) => e._id === newPrompt_id ? { ...e, response: generateResponse.data.response } : e);
-          return[...updatedP];
+          const new_p: any = {
+            _id: newPrompt_id,
+            request: inputContent,
+            response: ""
+          };
+    
+          return[...p, new_p];
         });
         setLoading({
-          ...loading, load: false
+          item_id: newPrompt_id,
+          load: true
         });
+  
+        // Fetches the response.
+        const generateResponse = await axiosInstance.get(`/prompt?prompt_id=${newPrompt_id}&chat_id=${session.user.chats[0]._id}&promptRequest=${inputContent}`);
+        if(generateResponse){
+          setChatPrompts((p: any) => {
+            const updatedP = p.map((e: any) => e._id === newPrompt_id ? { ...e, response: generateResponse.data.response } : e);
+            return[...updatedP];
+          });
+          setLoading({
+            ...loading, load: false
+          });
+        }
       }
-    }
-    catch(e) {
-      console.log(e);
+      catch(e) {
+        console.log(e);
+      }
     }
   };
 
@@ -169,7 +177,13 @@ const Main = ({ session_id }:{ session_id: any }) => {
 
   return (
      <>
-      {contextHolder}
+      <Notification
+        count={notification.count}
+        display={notification.display}
+        type={notification.type}
+        message={notification.message}
+        description={notification.description}
+      />
       <div className="w-full h-full flex justify-center items-center">
         <div className="w-full 2xl:w-4/5 h-full p-4 relative">
           {/* Side Menu */}
