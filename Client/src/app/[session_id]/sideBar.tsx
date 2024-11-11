@@ -3,14 +3,26 @@ import { BiLogOut } from "react-icons/bi";
 import { MdOutlineEditNote } from "react-icons/md";
 import { RiRobot3Line } from "react-icons/ri";
 import DropDown from "../components/promptComponents/dropDown";
+import { useEffect, useState } from "react";
 
 const SideBar = ({
-  chats,
+  userData,
   handleDeleteChat
 }:{
-  chats: any,
+  userData: any,
   handleDeleteChat: any
 }) => {
+
+  const [chats, setChats] = useState<any>([]);
+  const [profile, setProfile] = useState<any>({
+    _id: "",
+    fullName: ""
+  });
+
+  useEffect(() => {
+    setChats([...userData.chats]);
+    setProfile({ _id: userData._id, fullName: userData.fullName });
+  },[userData]);
 
   return (
     <div className="w-[300px] h-[calc(100%-32px)] absolute flex flex-col justify-between left-4 top-4 border border-slate-300 rounded-md">
@@ -43,42 +55,15 @@ const SideBar = ({
               } 
             </div>
           </div>
-          <div className="my-6">
-            <h3 className="w-full text-sm font-semibold px-2">Yesterday</h3>
-            <div className="w-full">
-              <Link href="" className="relative w-full h-8 flex justify-between items-center text-sm font-sans hover:bg-lightBlack px-2 my-1 rounded-md group">
-                <div className="w-10/12 overflow-hidden">
-                  <p className="text-nowrap">How to set up a router and how to begin the set up.</p>
-                </div>
-                  <DropDown
-                    handleDeleteChat={handleDeleteChat}
-                  />
-              </Link>
-              <Link href="" className="relative w-full h-8 flex justify-between items-center text-sm font-sans hover:bg-lightBlack px-2 my-1 rounded-md group">
-                <div className="w-10/12 overflow-hidden">
-                  <p className="text-nowrap">Component Based Architecture course.</p>
-                </div>
-                  <DropDown
-                    handleDeleteChat={handleDeleteChat}
-                  />
-              </Link>
-              <Link href="" className="relative w-full h-8 flex justify-between items-center text-sm font-sans hover:bg-lightBlack px-2 my-1 rounded-md group">
-                <div className="w-10/12 overflow-hidden">
-                  <p className="text-nowrap">Report writing for a final year project.</p>
-                </div>
-                  <DropDown
-                    handleDeleteChat={handleDeleteChat}
-                  />
-              </Link>
-            </div>
-          </div>
         </div>
       </div>
       {/* User Profile */}
       <div className="w-full flex items-center gap-4 p-4 my-4">
         <div className="w-full flex items-center gap-4">
-          <span className="w-12 p-1 flex items-center justify-center border border-white rounded-full text-white text-3xl font-semibold capitalize">J</span>
-          <p>John Doe</p>
+          <span className="w-12 p-1 flex items-center justify-center border border-white rounded-full text-white text-3xl font-semibold capitalize">
+            {profile.fullName.at(0)}
+          </span>
+          <p className="capitalize">{profile.fullName}</p>
         </div>
         <BiLogOut className="w-8 h-8 cursor-pointer"/>
       </div>

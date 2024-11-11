@@ -138,19 +138,16 @@ const Main = ({ session_id }:{ session_id: any }) => {
   
         return[...p, new_p];
       });
-
       setLoading({
         item_id: newPrompt_id,
         load: true
       });
 
+      // Fetches the response.
       const generateResponse = await axiosInstance.get(`/prompt?prompt_id=${newPrompt_id}&chat_id=${session.user.chats[0]._id}&promptRequest=${inputContent}`);
       if(generateResponse){
-        console.log("bfr_", chatPrompts);
         setChatPrompts((p: any) => {
           const updatedP = p.map((e: any) => e._id === newPrompt_id ? { ...e, response: generateResponse.data.response } : e);
-          console.log("UpdatadP:", updatedP);
-
           return[...updatedP];
         });
         setLoading({
@@ -178,7 +175,7 @@ const Main = ({ session_id }:{ session_id: any }) => {
           {/* Side Menu */}
           { session.user.chats &&
             <SideBar
-              chats={session.user.chats}
+              userData={session.user}
               handleDeleteChat={() => handleDeleteChat()}
             />
           }
