@@ -19,7 +19,13 @@ const Main = ({ session_id }:{ session_id: any }) => {
     user: {
       _id: "",
       fullName: "",
-      chats: []
+      chats: {
+        today: [],
+        yesterday: [],
+        last3Days: [],
+        last7Days: [],
+        lastWeek: []
+      }
     },
     active: false
   });
@@ -52,14 +58,54 @@ const Main = ({ session_id }:{ session_id: any }) => {
             // fetch User chats.
             const chats = await axiosInstance.get(`/user/chats/${user_data.data?._id}`);
             if(chats){
-              setSession({
-                _id: session_data.data._id,
-                user: {
-                  _id: user_data.data?._id,
-                  fullName: user_data.data?.fullName,
-                  chats:[...chats.data]
-                },
-                active: true
+              const nowHour: number = new Date().getDate();
+
+              setSession((sess: any) => {
+                return {
+                  _id: session_data.data._id,
+                  user: {
+                    _id: user_data.data?._id,
+                    fullName: user_data.data?.fullName,
+                    chats: {
+                      today: 
+                        chats.data.filter((chat: any) => {
+                          const createdHour: number = new Date(chat.date).getDate();
+                          const period: number = Math.abs(nowHour - createdHour);
+  
+                          if(period < 1){ return chat }
+                        }),
+                      yesterday:
+                        chats.data.filter((chat: any) => {
+                          const createdHour: number = new Date(chat.date).getDate();
+                          const period: number = Math.abs(nowHour - createdHour);
+
+                          if(period === 1){ return chat }
+                        }),
+                      last3Days:
+                        chats.data.filter((chat: any) => {
+                          const createdHour: number = new Date(chat.date).getDate();
+                          const period: number = Math.abs(nowHour - createdHour);
+
+                          if(period > 1 && period < 4){ return chat }
+                        }),
+                      last7Days:
+                        chats.data.filter((chat: any) => {
+                          const createdHour: number = new Date(chat.date).getDate();
+                          const period: number = Math.abs(nowHour - createdHour);
+
+                          if(period >= 4 && period <= 7){ return chat }
+                        }),
+                      lastWeek: 
+                        chats.data.filter((chat: any) => {
+                          const createdHour: number = new Date(chat.date).getDate();
+                          const period: number = Math.abs(nowHour - createdHour);
+
+                          if(period > 7){ return chat }
+                        })
+                    }
+                  },
+                  active: true
+                }
               });
             }
           }
@@ -94,7 +140,7 @@ const Main = ({ session_id }:{ session_id: any }) => {
     fetchUserData(session_id);
   }, []);
 
-  // console.log("Session data", session);
+  console.log("Session data", session);
   
   // TextArea handler.
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -215,13 +261,11 @@ const Main = ({ session_id }:{ session_id: any }) => {
       <div className="w-full h-full flex justify-center items-center">
         <div className="w-full 2xl:w-4/5 h-full p-4 relative">
           {/* Side Menu */}
-          { session.user.chats &&
-            <SideBar
-              userData={session.user}
-              handleDeleteChat={() => handleDeleteChat()}
-              handleLogOut={() => handleLogOut()}
-            />
-          }
+          <SideBar
+            userData={session.user}
+            handleDeleteChat={() => handleDeleteChat()}
+            handleLogOut={() => handleLogOut()}
+          />
           {/* Main Section */}
           <Chat
             display={display}
