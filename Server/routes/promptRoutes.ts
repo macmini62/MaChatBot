@@ -12,7 +12,7 @@ class PromptRouter{
 
   private routes(){
     PromptRouter.route.get("/prompt", (req, res) => this.botController.requestResponse(req, res));
-    PromptRouter.route.get("/prompt/:chat_id", (req, res) => this.botController.fetchPrompts(req, res))
+    PromptRouter.route.get("/prompts/:chat_id", (req, res) => this.botController.fetchPrompts(req, res))
   }
 }
 
