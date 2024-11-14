@@ -220,8 +220,6 @@ const Main = ({ session_id }:{ session_id: any }) => {
               }
             });
 
-            handleChatPrompts(res.data._id);
-
             const generateResponse = await axiosInstance.get(`/prompt?prompt_id=${newPrompt_id}&chat_id=${newChatId}&promptRequest=${inputContent}`);
             if(generateResponse){
               setChatPrompts((p: any) => {
@@ -232,6 +230,8 @@ const Main = ({ session_id }:{ session_id: any }) => {
                 ...loading, load: false
               });
             }
+            
+            handleChatPrompts(res.data._id);
           }
           catch(e){
             console.log(e);
