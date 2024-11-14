@@ -288,6 +288,9 @@ const Main = ({ session_id }:{ session_id: any }) => {
       outputStyle: { display: "block" }
     });
 
+    // Marks the chat as an active chat.
+    setChatActive({ _id: chat_id, style: {backgroundColor: "#303030"} });
+
     // Prompts are empty for a created chat.
     setChatPrompts([]);
 
@@ -304,9 +307,6 @@ const Main = ({ session_id }:{ session_id: any }) => {
         }
       }
     });
-
-    // Marks the chat as an active chat.
-    setChatActive({ _id: chat_id, style: {backgroundColor: "#303030"} });
   }
 
   // Handle retrieval of the chat prompts. Click on chat to retrieve.
@@ -327,6 +327,27 @@ const Main = ({ session_id }:{ session_id: any }) => {
       console.log(error);
     }
   }
+
+  // Retrieves the stored state of the active chat.
+  useEffect(() => {
+    let active: any = window.sessionStorage.getItem("chatActive");
+    active = JSON.parse(active);
+    console.log("active", active);
+
+    if(active){
+      setChatActive(active);
+
+      // Fetches the prompts for the chat.
+      handleChatPrompts(active._id);
+    }
+  }, []);
+
+  // Stores the state of the active chat.
+  useEffect(() => {
+    window.sessionStorage.setItem("chatActive", JSON.stringify(chatActive));
+  }, [chatActive]);
+
+  // console.log(chatActive);
 
   // Handles delete of chats
   const handleDeleteChat = () => {

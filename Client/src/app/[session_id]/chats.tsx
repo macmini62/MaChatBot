@@ -3,7 +3,6 @@
 import { RiRobot3Line } from "react-icons/ri";
 import Loading from "../components/promptComponents/loading";
 import MediaSection from "../components/promptComponents/mediaSection";
-import { useEffect, useState } from "react";
 
 const Chat = ({
   display,
