@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import DropDown from "./dropDown";
 
 interface Chat {

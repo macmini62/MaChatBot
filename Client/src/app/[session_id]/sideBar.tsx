@@ -24,7 +24,7 @@ const SideBar:React.FC<{
           <RiRobot3Line className="w-8 h-8"/>
           <h2 className="font-bold text-2xl">MaChatBot</h2>
         </div>
-        <button className="w-4/5 h-10 my-4 flex gap-4 items-center justify-center bg-lightBlack rounded-md">
+        <button className="w-4/5 h-10 my-4 flex gap-4 items-center justify-center bg-lightBlack cursor-pointer active:animate-ping rounded-md">
           <MdOutlineEditNote className="w-6 h-6"/>
           <p>New chat</p>
         </button>

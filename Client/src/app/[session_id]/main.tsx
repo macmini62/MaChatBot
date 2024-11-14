@@ -200,17 +200,55 @@ const Main = ({ session_id }:{ session_id: any }) => {
           item_id: newPrompt_id,
           load: true
         });
-  
-        // Fetches the response.
-        const generateResponse = await axiosInstance.get(`/prompt?prompt_id=${newPrompt_id}&chat_id=${chatActive._id}&promptRequest=${inputContent}`);
-        if(generateResponse){
-          setChatPrompts((p: any) => {
-            const updatedP = p.map((e: any) => e._id === newPrompt_id ? { ...e, response: generateResponse.data.response } : e);
-            return[...updatedP];
-          });
-          setLoading({
-            ...loading, load: false
-          });
+        
+        if(chatActive._id === ""){
+          try{
+            const newChatId = uuidv4();
+            const newChatTitle = inputContent.slice(0, 30).trim();
+            const res = await axiosInstance.post(`/user/chat`, {_id: newChatId, title: newChatTitle, user_id: session.user._id});
+
+            setSession((sess: any) => {
+              return{
+                ...sess,
+                user: {
+                  ...sess.user,
+                  chats:{
+                    ...sess.user.chats,
+                    today: [ ...sess.user.chats.today, res.data ]
+                  }
+                }
+              }
+            });
+
+            handleChatPrompts(res.data._id);
+
+            const generateResponse = await axiosInstance.get(`/prompt?prompt_id=${newPrompt_id}&chat_id=${newChatId}&promptRequest=${inputContent}`);
+            if(generateResponse){
+              setChatPrompts((p: any) => {
+                const updatedP = p.map((e: any) => e._id === newPrompt_id ? { ...e, response: generateResponse.data.response } : e);
+                return[...updatedP];
+              });
+              setLoading({
+                ...loading, load: false
+              });
+            }
+          }
+          catch(e){
+            console.log(e);
+          }
+        }
+        else{
+          // Fetches the response.
+          const generateResponse = await axiosInstance.get(`/prompt?prompt_id=${newPrompt_id}&chat_id=${chatActive._id}&promptRequest=${inputContent}`);
+          if(generateResponse){
+            setChatPrompts((p: any) => {
+              const updatedP = p.map((e: any) => e._id === newPrompt_id ? { ...e, response: generateResponse.data.response } : e);
+              return[...updatedP];
+            });
+            setLoading({
+              ...loading, load: false
+            });
+          }
         }
       }
       catch(e) {
