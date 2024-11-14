@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import DropDown from "./dropDown";
 
 interface Chat {
@@ -24,12 +25,18 @@ const History:React.FC<Period> = ({
   handleDeleteChat
 }) => {
 
+  // Reverses the elements of the array to display the most current item on top of the list.
+  const [reversePeriodChats, setReversePeriodChats] = useState<any>([]);
+  useEffect(() => {
+    setReversePeriodChats([...periodChats.toReversed()])
+  }, [periodChats]);
+
   return (
     <div className="my-6">
       <h3 className="w-full text-sm font-semibold px-2">{period}</h3>
       <div className="w-full">
         { period &&
-          periodChats.map((chat: Chat) => (
+          reversePeriodChats.map((chat: Chat) => (
             <div
               key={chat._id}
               onClick={() => handleChatPrompts(chat._id)}

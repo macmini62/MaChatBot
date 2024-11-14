@@ -44,7 +44,7 @@ const Main = ({ session_id }:{ session_id: any }) => {
     load: false
   });
   const [notification, setNotification] = useState<any>({ count: 0 });
-  const [chatActive, setChatActive] = useState<any>({
+  const [chatActive, setChatActive] = useState<any>({ // updated when one selects a chat do display its prompts.
     _id: "",
     style: {}
   });
@@ -220,6 +220,8 @@ const Main = ({ session_id }:{ session_id: any }) => {
               }
             });
 
+            setChatActive({ _id: newChatId, style: {backgroundColor: "#303030"} });
+
             const generateResponse = await axiosInstance.get(`/prompt?prompt_id=${newPrompt_id}&chat_id=${newChatId}&promptRequest=${inputContent}`);
             if(generateResponse){
               setChatPrompts((p: any) => {
@@ -235,6 +237,9 @@ const Main = ({ session_id }:{ session_id: any }) => {
           }
           catch(e){
             console.log(e);
+            setLoading({
+              ...loading, load: false
+            });
           }
         }
         else{
@@ -271,6 +276,38 @@ const Main = ({ session_id }:{ session_id: any }) => {
   };
 
   // console.log("chatPrompts", chatPrompts);
+
+  const handleCreateNewChat = async(): Promise<void> => {
+    const chat_id: string = uuidv4();
+
+    const res = await axiosInstance.post(`/user/chat`, {_id: chat_id, title: "New Chat", user_id: session.user._id});
+    console.log("res", res);
+    !display.show && setDisplay({
+      show: true,
+      parentStyle: { justifyContent: "between" },
+      outputStyle: { display: "block" }
+    });
+
+    // Prompts are empty for a created chat.
+    setChatPrompts([]);
+
+    // Add the chat to the session.
+    setSession((sess: any) => {
+      return{
+        ...sess,
+        user: {
+          ...sess.user,
+          chats:{
+            ...sess.user.chats,
+            today: [ ...sess.user.chats.today, res.data ]
+          }
+        }
+      }
+    });
+
+    // Marks the chat as an active chat.
+    setChatActive({ _id: chat_id, style: {backgroundColor: "#303030"} });
+  }
 
   // Handle retrieval of the chat prompts. Click on chat to retrieve.
   const handleChatPrompts = async(chat_id: string): Promise<void> => {
@@ -315,6 +352,7 @@ const Main = ({ session_id }:{ session_id: any }) => {
           <SideBar
             session={session}
             handleChatPrompts={handleChatPrompts}
+            handleCreateNewChat={handleCreateNewChat}
             handleDeleteChat={handleDeleteChat}
             handleLogOut={handleLogOut}
             chatActive={chatActive}

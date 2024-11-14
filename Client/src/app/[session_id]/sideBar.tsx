@@ -6,12 +6,14 @@ import History from "../components/promptComponents/history";
 const SideBar:React.FC<{
   session: any,
   handleChatPrompts: (chat_id: any) => any,
+  handleCreateNewChat: () => void,
   handleDeleteChat: () => void,
   handleLogOut: () => void,
   chatActive: any
 }> = ({
   session,
   handleChatPrompts,
+  handleCreateNewChat,
   handleDeleteChat,
   handleLogOut,
   chatActive,
@@ -19,17 +21,20 @@ const SideBar:React.FC<{
 
   return (
     <div className="w-[300px] h-[calc(100%-32px)] absolute flex flex-col justify-between left-4 top-4 border border-slate-300 rounded-md">
-      <div className="w-full flex flex-col items-center">
+      <div className="w-full flex flex-col items-center h-[90%]">
         <div className="flex gap-4 items-center my-4">
           <RiRobot3Line className="w-8 h-8"/>
           <h2 className="font-bold text-2xl">MaChatBot</h2>
         </div>
-        <button className="w-4/5 h-10 my-4 flex gap-4 items-center justify-center bg-lightBlack cursor-pointer active:animate-ping rounded-md">
-          <MdOutlineEditNote className="w-6 h-6"/>
+        <button
+          onClick={handleCreateNewChat}
+          className="w-4/5 h-10 my-4 flex gap-6 items-center justify-center bg-lightBlack cursor-pointer hover:scale-[1.01] rounded-md"
+         >
           <p>New chat</p>
+          <MdOutlineEditNote className="w-6 h-6"/>
         </button>
         {/* Sessions history */}
-        <div className="w-full px-4 my-4">
+        <div className="w-full px-4 my-4 overflow-auto">
           {/* History */}
           { session.user.chats.today.length > 0 &&
             <History
