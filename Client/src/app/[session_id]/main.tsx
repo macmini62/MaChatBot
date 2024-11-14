@@ -344,7 +344,7 @@ const Main = ({ session_id }:{ session_id: any }) => {
   // Retrieves the stored state of the active chat.
   useEffect(() => {
     let sess_id: any = window.sessionStorage.getItem("session_id");
-    sess_id = JSON.parse(sess_id)
+    sess_id = JSON.parse(sess_id);
     let active: any = window.sessionStorage.getItem("chatActive");
     active = JSON.parse(active);
 
@@ -360,7 +360,14 @@ const Main = ({ session_id }:{ session_id: any }) => {
 
   // Stores the state of the active chat.
   useEffect(() => {
-    window.sessionStorage.setItem("chatActive", JSON.stringify(chatActive));
+    let sess_id: any = window.sessionStorage.getItem("session_id");
+    sess_id = JSON.parse(sess_id);
+
+    // Saves the state of the chat if in the same session.
+    if(session_id.session_id === sess_id.session_id){
+      window.sessionStorage.setItem("chatActive", JSON.stringify(chatActive));
+    }
+
   }, [chatActive]);
 
   // console.log(chatActive);
