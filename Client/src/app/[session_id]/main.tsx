@@ -13,7 +13,7 @@ const Main = ({ session_id }:{ session_id: any }) => {
 
   // Extracts the session_id from the URL
   session_id = JSON.parse(session_id.value);
-  
+
   const [session, setSession] = useState<any>({
     _id: "",
     user: {
@@ -24,13 +24,16 @@ const Main = ({ session_id }:{ session_id: any }) => {
         yesterday: [],
         last3Days: [],
         last7Days: [],
-        lastWeek: []
+        lastWeek: [],
+        lessThanAMonth: [],
+        lastMonth: [],
+        moreThanAMonth: []
       }
     },
     active: false
   });
-  const [inputContent, setInputContent] = useState<string>("");
   const [chatPrompts, setChatPrompts] = useState<any>([]);
+  const [inputContent, setInputContent] = useState<string>("");
   const [display, setDisplay] = useState<any>({
     show: false,
     parentStyle: {},
@@ -41,9 +44,13 @@ const Main = ({ session_id }:{ session_id: any }) => {
     load: false
   });
   const [notification, setNotification] = useState<any>({ count: 0 });
+  const [chatActive, setChatActive] = useState<any>({
+    _id: "",
+    style: {}
+  });
 
   // Fetches the session data, user's data and chats data after login using session id.
-  const fetchUserData = async({ session_id }:{ session_id: object }): Promise<any> => {
+  const fetchUserData = async({session_id}:{session_id: object}): Promise<any> => {
     try{
       // Fetch session data.
       const session_data: any = await axiosInstance.get(`/session/${session_id}`);
@@ -55,57 +62,55 @@ const Main = ({ session_id }:{ session_id: any }) => {
           //Fetch user data.
           const user_data: any = await axiosInstance.get(`/user/session/${session_id}`);
           if(user_data){
-            // fetch User chats.
+            // Fetch chats.
             const chats = await axiosInstance.get(`/user/chats/${user_data.data?._id}`);
             if(chats){
               const nowHour: number = new Date().getDate();
 
-              setSession((sess: any) => {
-                return {
-                  _id: session_data.data._id,
-                  user: {
-                    _id: user_data.data?._id,
-                    fullName: user_data.data?.fullName,
-                    chats: {
-                      today: 
-                        chats.data.filter((chat: any) => {
-                          const createdHour: number = new Date(chat.date).getDate();
-                          const period: number = Math.abs(nowHour - createdHour);
-  
-                          if(period < 1){ return chat }
-                        }),
-                      yesterday:
-                        chats.data.filter((chat: any) => {
-                          const createdHour: number = new Date(chat.date).getDate();
-                          const period: number = Math.abs(nowHour - createdHour);
+              setSession({
+                _id: session_data.data._id,
+                user: {
+                  _id: user_data.data?._id,
+                  fullName: user_data.data?.fullName,
+                  chats: {
+                    today: 
+                      chats.data.filter((chat: any) => {
+                        const createdHour: number = new Date(chat.date).getDate();
+                        const period: number = Math.abs(nowHour - createdHour);
 
-                          if(period === 1){ return chat }
-                        }),
-                      last3Days:
-                        chats.data.filter((chat: any) => {
-                          const createdHour: number = new Date(chat.date).getDate();
-                          const period: number = Math.abs(nowHour - createdHour);
+                        if(period < 1){ return chat }
+                      }),
+                    yesterday:
+                      chats.data.filter((chat: any) => {
+                        const createdHour: number = new Date(chat.date).getDate();
+                        const period: number = Math.abs(nowHour - createdHour);
 
-                          if(period > 1 && period < 4){ return chat }
-                        }),
-                      last7Days:
-                        chats.data.filter((chat: any) => {
-                          const createdHour: number = new Date(chat.date).getDate();
-                          const period: number = Math.abs(nowHour - createdHour);
+                        if(period === 1){ return chat }
+                      }),
+                    last3Days:
+                      chats.data.filter((chat: any) => {
+                        const createdHour: number = new Date(chat.date).getDate();
+                        const period: number = Math.abs(nowHour - createdHour);
 
-                          if(period >= 4 && period <= 7){ return chat }
-                        }),
-                      lastWeek: 
-                        chats.data.filter((chat: any) => {
-                          const createdHour: number = new Date(chat.date).getDate();
-                          const period: number = Math.abs(nowHour - createdHour);
+                        if(period > 1 && period < 4){ return chat }
+                      }),
+                    last7Days:
+                      chats.data.filter((chat: any) => {
+                        const createdHour: number = new Date(chat.date).getDate();
+                        const period: number = Math.abs(nowHour - createdHour);
 
-                          if(period > 7){ return chat }
-                        })
-                    }
-                  },
-                  active: true
-                }
+                        if(period >= 4 && period <= 7){ return chat }
+                      }),
+                    lastWeek: 
+                      chats.data.filter((chat: any) => {
+                        const createdHour: number = new Date(chat.date).getDate();
+                        const period: number = Math.abs(nowHour - createdHour);
+
+                        if(period > 7){ return chat }
+                      })
+                  }
+                },
+                active: true
               });
             }
           }
@@ -140,7 +145,7 @@ const Main = ({ session_id }:{ session_id: any }) => {
     fetchUserData(session_id);
   }, []);
 
-  console.log("Session data", session);
+  // console.log("Session data", session);
   
   // TextArea handler.
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -150,14 +155,13 @@ const Main = ({ session_id }:{ session_id: any }) => {
       textarea.style.height = "56px"; // Reset height to original to shrink on backspacing
       textarea.style.height = `${textarea.scrollHeight}px`; // Set height based on scroll height
     }
-
   }, [inputContent]);
   const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInputContent(event.target.value);
   };
 
   // handle the submit of input
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if(inputContent === ""){
@@ -173,7 +177,7 @@ const Main = ({ session_id }:{ session_id: any }) => {
       });
     }
     else{
-      setDisplay({
+      !display.show && setDisplay({
         show: true,
         parentStyle: { justifyContent: "between" },
         outputStyle: { display: "block" }
@@ -198,7 +202,7 @@ const Main = ({ session_id }:{ session_id: any }) => {
         });
   
         // Fetches the response.
-        const generateResponse = await axiosInstance.get(`/prompt?prompt_id=${newPrompt_id}&chat_id=${session.user.chats[0]._id}&promptRequest=${inputContent}`);
+        const generateResponse = await axiosInstance.get(`/prompt?prompt_id=${newPrompt_id}&chat_id=${chatActive._id}&promptRequest=${inputContent}`);
         if(generateResponse){
           setChatPrompts((p: any) => {
             const updatedP = p.map((e: any) => e._id === newPrompt_id ? { ...e, response: generateResponse.data.response } : e);
@@ -230,22 +234,31 @@ const Main = ({ session_id }:{ session_id: any }) => {
 
   // console.log("chatPrompts", chatPrompts);
 
+  // Handle retrieval of the chat prompts. Click on chat to retrieve.
+  const handleChatPrompts = async(chat_id: string): Promise<void> => {
+    try{
+      const res = await axiosInstance.get(`/prompts/${chat_id}`);
+      if(res){
+        setChatPrompts([...res.data]);
+        !display.show && setDisplay({
+          show: true,
+          parentStyle: { justifyContent: "between" },
+          outputStyle: { display: "block" }
+        });
+        setChatActive({ _id: chat_id, style: {backgroundColor: "#303030"} });
+      }
+    }
+    catch(error: any){
+      console.log(error);
+    }
+  }
+
   // Handles delete of chats
   const handleDeleteChat = () => {
       console.log("yellow");
   }
 
   const handleLogOut = () => {
-    setSession({
-      _id: "",
-      user: {
-        _id: "",
-        fullName: "",
-        chats: []
-      },
-      active: false
-    });
-
     redirect("/");
   }
 
@@ -262,9 +275,11 @@ const Main = ({ session_id }:{ session_id: any }) => {
         <div className="w-full 2xl:w-4/5 h-full p-4 relative">
           {/* Side Menu */}
           <SideBar
-            userData={session.user}
-            handleDeleteChat={() => handleDeleteChat()}
-            handleLogOut={() => handleLogOut()}
+            session={session}
+            handleChatPrompts={handleChatPrompts}
+            handleDeleteChat={handleDeleteChat}
+            handleLogOut={handleLogOut}
+            chatActive={chatActive}
           />
           {/* Main Section */}
           <Chat

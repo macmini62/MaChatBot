@@ -1,17 +1,20 @@
-import Link from "next/link";
 import { BiLogOut } from "react-icons/bi";
 import { MdOutlineEditNote } from "react-icons/md";
 import { RiRobot3Line } from "react-icons/ri";
-import DropDown from "../components/promptComponents/dropDown";
+import History from "../components/promptComponents/history";
 
-const SideBar = ({
-  userData,
+const SideBar:React.FC<{
+  session: any,
+  handleChatPrompts: (chat_id: any) => any,
+  handleDeleteChat: () => void,
+  handleLogOut: () => void,
+  chatActive: any
+}> = ({
+  session,
+  handleChatPrompts,
   handleDeleteChat,
   handleLogOut,
-}:{
-  userData: any,
-  handleDeleteChat: any,
-  handleLogOut: any
+  chatActive,
 }) => {
 
   return (
@@ -28,104 +31,41 @@ const SideBar = ({
         {/* Sessions history */}
         <div className="w-full px-4 my-4">
           {/* History */}
-          { userData.chats.today.length > 0 &&
-            <div className="my-6">
-              <h3 className="w-full text-sm font-semibold px-2">Today</h3>
-              <div className="w-full">
-                {
-                  userData.chats.today.map((chat: any, index: number) => (
-                    <Link key={index} href="" className="relative w-full h-8 flex justify-between items-center text-sm font-sans hover:bg-lightBlack px-2 my-1 rounded-md group">
-                      <div className="w-10/12 overflow-hidden">
-                        <p className="text-nowrap">{chat.title}</p>
-                      </div>
-                      <DropDown
-                        handleDeleteChat={handleDeleteChat}
-                      />
-                    </Link>
-                  ))
-                } 
-              </div>
-            </div>
+          { session.user.chats.today.length > 0 &&
+            <History
+              periodChats={session.user.chats.today}
+              period={"Today"}
+              chatActive={chatActive}
+              handleChatPrompts={handleChatPrompts}
+              handleDeleteChat={handleDeleteChat}
+            />
           }
-          {
-            userData.chats.yesterday.length > 0 &&
-            <div className="my-6">
-              <h3 className="w-full text-sm font-semibold px-2">Yesterday</h3>
-              <div className="w-full">
-                {
-                  userData.chats.yesterday.map((chat: any, index: number) => (
-                    <Link key={index} href="" className="relative w-full h-8 flex justify-between items-center text-sm font-sans hover:bg-lightBlack px-2 my-1 rounded-md group">
-                      <div className="w-10/12 overflow-hidden">
-                        <p className="text-nowrap">{chat.title}</p>
-                      </div>
-                      <DropDown
-                        handleDeleteChat={handleDeleteChat}
-                      />
-                    </Link>
-                  ))
-                } 
-              </div>
-            </div>
+          { session.user.chats.yesterday.length > 0 &&
+            <History
+              periodChats={session.user.chats.yesterday}
+              period={"Yesterday"}
+              chatActive={chatActive}
+              handleChatPrompts={handleChatPrompts}
+              handleDeleteChat={handleDeleteChat}
+            />
           }
-          {
-            userData.chats.last3Days.length > 0 &&
-            <div className="my-6">
-              <h3 className="w-full text-sm font-semibold px-2">Last 3 Days</h3>
-              <div className="w-full">
-                {
-                  userData.chats.last3Days.map((chat: any, index: number) => (
-                    <Link key={index} href="" className="relative w-full h-8 flex justify-between items-center text-sm font-sans hover:bg-lightBlack px-2 my-1 rounded-md group">
-                      <div className="w-10/12 overflow-hidden">
-                        <p className="text-nowrap">{chat.title}</p>
-                      </div>
-                      <DropDown
-                        handleDeleteChat={handleDeleteChat}
-                      />
-                    </Link>
-                  ))
-                } 
-              </div>
-            </div>
+          { session.user.chats.last3Days.length > 0 &&
+            <History
+              periodChats={session.user.chats.last3Days}
+              period={"Last 3 Days"}
+              chatActive={chatActive}
+              handleChatPrompts={handleChatPrompts}
+              handleDeleteChat={handleDeleteChat}
+            />
           }
-          {
-            userData.chats.last7Days.length > 0 &&
-            <div className="my-6">
-              <h3 className="w-full text-sm font-semibold px-2">Last 7 Days</h3>
-              <div className="w-full">
-                {
-                  userData.chats.last7Days.map((chat: any, index: number) => (
-                    <Link key={index} href="" className="relative w-full h-8 flex justify-between items-center text-sm font-sans hover:bg-lightBlack px-2 my-1 rounded-md group">
-                      <div className="w-10/12 overflow-hidden">
-                        <p className="text-nowrap">{chat.title}</p>
-                      </div>
-                      <DropDown
-                        handleDeleteChat={handleDeleteChat}
-                      />
-                    </Link>
-                  ))
-                } 
-              </div>
-            </div>
-          }
-          {
-            userData.chats.lastWeek.length > 0 &&
-            <div className="my-6">
-              <h3 className="w-full text-sm font-semibold px-2">Last Week</h3>
-              <div className="w-full">
-                {
-                  userData.chats.lastWeek.map((chat: any, index: number) => (
-                    <Link key={index} href="" className="relative w-full h-8 flex justify-between items-center text-sm font-sans hover:bg-lightBlack px-2 my-1 rounded-md group">
-                      <div className="w-10/12 overflow-hidden">
-                        <p className="text-nowrap">{chat.title}</p>
-                      </div>
-                      <DropDown
-                        handleDeleteChat={handleDeleteChat}
-                      />
-                    </Link>
-                  ))
-                } 
-              </div>
-            </div>
+          { session.user.chats.last7Days.length > 0 &&
+            <History
+              periodChats={session.user.chats.last7Days}
+              period={"Last 7 Days"}
+              chatActive={chatActive}
+              handleChatPrompts={handleChatPrompts}
+              handleDeleteChat={handleDeleteChat}
+            />
           }
         </div>
       </div>
@@ -133,11 +73,11 @@ const SideBar = ({
       <div className="w-full flex items-center gap-4 p-4 my-4">
         <div className="w-full flex items-center gap-4">
           <span className="w-12 p-1 flex items-center justify-center border border-white rounded-full text-white text-3xl font-semibold capitalize">
-            {userData.fullName.at(0)}
+            {session.user.fullName.at(0)}
           </span>
-          <p className="capitalize">{userData.fullName}</p>
+          <p className="capitalize">{session.user.fullName}</p>
         </div>
-        <BiLogOut onClick={handleLogOut} className="w-8 h-8 cursor-pointer"/>
+        <BiLogOut onClick={() => handleLogOut()} className="w-8 h-8 cursor-pointer"/>
       </div>
     </div>
   )
