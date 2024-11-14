@@ -13,6 +13,9 @@ const Main = ({ session_id }:{ session_id: any }) => {
 
   // Extracts the session_id from the URL
   session_id = JSON.parse(session_id.value);
+  useEffect(() => {
+    window.sessionStorage.setItem("session_id", JSON.stringify(session_id));
+  }, [])
 
   const [session, setSession] = useState<any>({
     _id: "",
@@ -340,14 +343,18 @@ const Main = ({ session_id }:{ session_id: any }) => {
 
   // Retrieves the stored state of the active chat.
   useEffect(() => {
+    let sess_id: any = window.sessionStorage.getItem("session_id");
+    sess_id = JSON.parse(sess_id)
     let active: any = window.sessionStorage.getItem("chatActive");
     active = JSON.parse(active);
-    // console.log("active", active);
 
-    if(active){
-      setChatActive(active);
-      // Fetches the prompts for the chat.
-      handleChatPrompts(active._id);
+    // Returns page to the previous state before refresh.
+    if(session_id.session_id === sess_id.session_id){
+      if(active){
+        setChatActive(active);
+        // Fetches the prompts for the chat.
+        handleChatPrompts(active._id);
+      }
     }
   }, []);
 
