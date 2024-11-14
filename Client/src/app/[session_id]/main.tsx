@@ -182,6 +182,18 @@ const Main = ({ session_id }:{ session_id: any }) => {
         parentStyle: { justifyContent: "between" },
         outputStyle: { display: "block" }
       });
+
+      // Update the title has been newly created.
+      if(chatPrompts.length === 0){
+        try{
+          const chat_id = chatActive._id;
+          const newChatTitle = inputContent.slice(0, 30).trim();
+          await axiosInstance.put("/user/chat", { chat_id, newChatTitle });
+        }
+        catch(e){
+          console.log(e);
+        }
+      }
   
       try {
         setInputContent("");
@@ -223,15 +235,13 @@ const Main = ({ session_id }:{ session_id: any }) => {
             setChatActive({ _id: newChatId, style: {backgroundColor: "#303030"} });
 
             const generateResponse = await axiosInstance.get(`/prompt?prompt_id=${newPrompt_id}&chat_id=${newChatId}&promptRequest=${inputContent}`);
-            if(generateResponse){
-              setChatPrompts((p: any) => {
-                const updatedP = p.map((e: any) => e._id === newPrompt_id ? { ...e, response: generateResponse.data.response } : e);
-                return[...updatedP];
-              });
-              setLoading({
-                ...loading, load: false
-              });
-            }
+            setChatPrompts((p: any) => {
+              const updatedP = p.map((e: any) => e._id === newPrompt_id ? { ...e, response: generateResponse.data.response } : e);
+              return[...updatedP];
+            });
+            setLoading({
+              ...loading, load: false
+            });
             
             handleChatPrompts(res.data._id);
           }
@@ -332,11 +342,10 @@ const Main = ({ session_id }:{ session_id: any }) => {
   useEffect(() => {
     let active: any = window.sessionStorage.getItem("chatActive");
     active = JSON.parse(active);
-    console.log("active", active);
+    // console.log("active", active);
 
     if(active){
       setChatActive(active);
-
       // Fetches the prompts for the chat.
       handleChatPrompts(active._id);
     }

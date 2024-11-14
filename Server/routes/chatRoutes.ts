@@ -13,6 +13,7 @@ class ChatRoutes{
   private routes(){
     ChatRoutes.route.post("/user/chat", (req, res) => this.chatController.createChat(req, res));
     ChatRoutes.route.get("/user/chats/:user_id", (req, res) => this.chatController.fetchChat(req, res));
+    ChatRoutes.route.put("/user/chat", (req, res) => this.chatController.updateChat(req, res));
   }
 }
 
