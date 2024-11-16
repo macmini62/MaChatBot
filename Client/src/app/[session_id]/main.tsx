@@ -324,9 +324,9 @@ const Main = ({ session_id }:{ session_id: any }) => {
 
   // Handle retrieval of the chat prompts. Click on chat to retrieve.
   const handleChatPrompts = async(chat_id: string): Promise<void> => {
-    try{
-      const res = await axiosInstance.get(`/prompts/${chat_id}`);
-      if(res){
+    if(chat_id !== ""){
+      try{
+        const res = await axiosInstance.get(`/prompts/${chat_id}`);
         setChatPrompts([...res.data]);
         !display.show && setDisplay({
           show: true,
@@ -335,9 +335,9 @@ const Main = ({ session_id }:{ session_id: any }) => {
         });
         setChatActive({ _id: chat_id, style: {backgroundColor: "#303030"} });
       }
-    }
-    catch(error: any){
-      console.log(error);
+      catch(error: any){
+        console.log(error);
+      }
     }
   }
 
@@ -347,7 +347,7 @@ const Main = ({ session_id }:{ session_id: any }) => {
     sess_id = JSON.parse(sess_id);
     let active: any = window.sessionStorage.getItem("chatActive");
     active = JSON.parse(active);
-
+    
     // Returns page to the previous state before refresh.
     if(session_id.session_id === sess_id.session_id){
       if(active){
@@ -378,6 +378,7 @@ const Main = ({ session_id }:{ session_id: any }) => {
   }
 
   const handleLogOut = () => {
+    window.sessionStorage.clear();
     redirect("/");
   }
 
