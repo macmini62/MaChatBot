@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 const Page = () => {
   return (
     <>
-      {redirect("/auth/login")}
+      {redirect("/auth/signup")}
     </>
   )
 }

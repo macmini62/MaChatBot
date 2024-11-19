@@ -1,10 +1,9 @@
 import { Request, Response } from "express";
 import User from "../database/users";
 import { v4 as uuidv4 } from "uuid";
-import jwt from "jsonwebtoken";
 import AuthMiddleware from "../middlewares/authMiddleware";
 
-export default class UserController{
+export default class UserController {
 
   public async createUser(req: Request, res: Response): Promise<void> {
     try{
@@ -29,7 +28,7 @@ export default class UserController{
     try{
       const email: any = req.query.email;
       const user = await User.findOne({ email: email });
-      console.log(user);
+      // console.log(user);
 
       if(!user){
         res.status(404).send({ message: "No user found!" });

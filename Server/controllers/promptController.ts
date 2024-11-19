@@ -8,7 +8,7 @@ export default class PromptController{
       const prompt_id: any = req.query.prompt_id;
       const chat_id: any = req.query.chat_id;
       const promptRequest: any = req.query.promptRequest;
-      console.log(req);
+      // console.log(req);
 
       // get prompt results
       const requestResponse = async () => {
@@ -51,7 +51,7 @@ export default class PromptController{
   public fetchPrompts = async(req: Request, res: Response): Promise<void> => {
     try{
       const { chat_id }: any = req.params;
-      console.log(req);
+      // console.log(req);
 
       const prompts = await Prompt.find({ chat_id: chat_id });
       if(!prompts){

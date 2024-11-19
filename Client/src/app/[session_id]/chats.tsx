@@ -5,6 +5,7 @@ import Loading from "../components/promptComponents/loading";
 import MediaSection from "../components/promptComponents/mediaSection";
 
 const Chat = ({
+  user,
   display,
   loading,
   onSubmit,
@@ -13,6 +14,7 @@ const Chat = ({
   textareaRef,
   chatPrompts
 }:{
+  user: any,
   display: any,
   loading: any,
   onSubmit: any,
@@ -32,7 +34,7 @@ const Chat = ({
                 <div key={prompt._id}>
                   {/* Prompted Query. */}
                   <div className="flex gap-2 items-center justify-center">
-                    <span className="w-8 flex items-center justify-center border border-white rounded-full text-white text-lg font-semibold capitalize">J</span>
+                    <span className="w-8 flex items-center justify-center border border-white rounded-full text-white text-lg font-semibold capitalize">{user.fullName.at(0)}</span>
                     <div className=" w-full p-2 bg-lightBlack rounded-md opacity-75 my-2">{prompt.request}</div>
                   </div>
                   <div className="flex gap-2">

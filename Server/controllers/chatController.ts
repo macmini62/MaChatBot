@@ -1,8 +1,7 @@
 import { Request, Response } from "express";
-import { v4 as uuidv4 } from "uuid";
 import Chat from "../database/chats";
 
-export default class ChatController{
+export default class ChatController {
   public createChat = async(req: Request, res: Response): Promise<void> => {
     try{
       const { _id, title, user_id } = req.body;

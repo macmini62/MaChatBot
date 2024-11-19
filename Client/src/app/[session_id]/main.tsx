@@ -15,7 +15,7 @@ const Main = ({ session_id }:{ session_id: any }) => {
   session_id = JSON.parse(session_id.value);
   useEffect(() => {
     window.sessionStorage.setItem("session_id", JSON.stringify(session_id));
-  }, [])
+  }, []);
 
   const [session, setSession] = useState<any>({
     _id: "",
@@ -333,7 +333,7 @@ const Main = ({ session_id }:{ session_id: any }) => {
           parentStyle: { justifyContent: "between" },
           outputStyle: { display: "block" }
         });
-        setChatActive({ _id: chat_id, style: {backgroundColor: "#303030"} });
+        setChatActive({ _id: chat_id, style: {backgroundColor: "#303030"}});
       }
       catch(error: any){
         console.log(error);
@@ -347,7 +347,7 @@ const Main = ({ session_id }:{ session_id: any }) => {
     sess_id = JSON.parse(sess_id);
     let active: any = window.sessionStorage.getItem("chatActive");
     active = JSON.parse(active);
-    
+
     // Returns page to the previous state before refresh.
     if(session_id.session_id === sess_id.session_id){
       if(active){
@@ -367,7 +367,6 @@ const Main = ({ session_id }:{ session_id: any }) => {
     if(session_id.session_id === sess_id.session_id){
       window.sessionStorage.setItem("chatActive", JSON.stringify(chatActive));
     }
-
   }, [chatActive]);
 
   // console.log(chatActive);
@@ -404,6 +403,7 @@ const Main = ({ session_id }:{ session_id: any }) => {
           />
           {/* Main Section */}
           <Chat
+            user={session.user}
             display={display}
             loading={loading}
             onSubmit={onSubmit}
