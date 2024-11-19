@@ -4,12 +4,12 @@ import React, { Suspense, useEffect } from "react";
 import { notification, NotificationArgsProps } from "antd";
 
 type NotificationType = "success" | "info" | "warning" | "error";
-type NotificationPlacement = NotificationArgsProps["placement"];
 
-const Notification: React.FC<{type: NotificationType, placement: NotificationPlacement, message: string, description?: string }> = (
+const Notification: React.FC<{count: number, display: boolean, type: NotificationType, message: string, description?: string }> = (
   {
+    count,
+    display,
     type,
-    placement,
     message,
     description
   }
@@ -25,15 +25,15 @@ const Notification: React.FC<{type: NotificationType, placement: NotificationPla
   });
 
   useEffect(() => {
-    if(type){
+    if(display){
       api[type]({
-        placement: placement,
+        placement: "bottomLeft",
         message: message,
         description: description,
-        duration: null,
+        duration: 3,
       });
     }
-  }, [type])
+  },[count]);
 
   return (
     <Suspense>

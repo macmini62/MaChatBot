@@ -15,11 +15,6 @@ export default function RootLayout({
     <html lang="en">
       <body className="w-screen h-screen">
         {children}
-        {/* <Notification
-          type="success"
-          placement="bottomLeft"
-          message="Logged In sucessfully."
-        /> */}
       </body>
     </html>
   );

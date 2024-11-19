@@ -9,8 +9,8 @@ import { z } from "zod";
 import InputFields from "../../components/authComponents/InputFields";
 import axiosInstance from "@/app/utils/axiosInstance";
 import { redirect } from "next/navigation";
-import React from "react";
-import { notification } from "antd";
+import React, { useState } from "react";
+import Notification from "@/app/components/notification/notification";
 
 const schema = z.object({
   email: z.string().email({message: "Invalid email address!"}),
@@ -29,16 +29,7 @@ const LogInPage = () => {
     resolver: zodResolver(schema),
   });
 
-  // Notification
-  const [enabled, setEnabled] = React.useState(true);
-  const [threshold, setThreshold] = React.useState(2);
-  const [api, contextHolder] = notification.useNotification({
-    stack: enabled
-      ? {
-          threshold,
-        }
-      : false,
-  });
+  const [notification, setNotification] = useState<any>({ count: 0 });
   
   // Fetch an authorize user
   const onSubmit = handleSubmit(async (data) => {
@@ -46,26 +37,32 @@ const LogInPage = () => {
     if(user){
       const { password, token } = user.data;
       if(password === data.password){
-        api["success"]({
-          placement: "bottomLeft",
-          message: "Logged In successfully.",
-          description: "",
-          duration: 3,
+        setNotification((not: any) => {
+          not.count = not.count + 1;
+          return{
+            ...not,
+            display: true,
+            type: "success",
+            message: "Logged In successfully.",
+          }
         });
 
         // Creates a session for the user
-        const session = await axiosInstance.post(`/user/session?auth_token=${token}`);
+        const session = await axiosInstance.post(`/session?auth_token=${token}`);
         console.log(session);
         if(session){
           redirect(`/${session.data._id}`);
         }
       }
       else{
-        api["error"]({
-          placement: "bottomLeft",
-          message: "Please check your password!",
-          description: "",
-          duration: 3,
+        setNotification((not: any) => {
+          not.count = not.count + 1;
+          return{
+            ...not,
+            display: true,
+            type: "error",
+            message: "Wrong Password. Check your password then try again.",
+          }
         });
       }
     }
@@ -73,7 +70,13 @@ const LogInPage = () => {
 
   return (
     <>
-      {contextHolder}
+      <Notification
+        count={notification.count}
+        display={notification.display}
+        type={notification.type}
+        message={notification.message}
+        description={notification.description}
+      />
       <div className="flex justify-center items-center w-full h-full">
         <div className="w-[512px] rounded-md border border-gray-200 p-10">
           <div className="flex gap-4 items-center">

@@ -1,14 +1,14 @@
 import { Request, Response } from "express";
-import { v4 as uuidv4 } from "uuid";
 import Chat from "../database/chats";
 
-export default class ChatController{
+export default class ChatController {
   public createChat = async(req: Request, res: Response): Promise<void> => {
     try{
-      const { title, user_id } = req.body;
+      const { _id, title, user_id } = req.body;
+      // console.log("chat..",req);
 
       const chat = await Chat.create({
-        _id: uuidv4(),
+        _id: _id,
         user_id: user_id,
         title: title,
         date: new Date(),
@@ -18,7 +18,7 @@ export default class ChatController{
         res.status(501).send({ message: "Unable to create a new Chat!" });
       }
 
-      res.status(201).send({ message: "Chat created Successfully!" });
+      res.status(201).json(chat);
     }
     catch(e){
       console.log(e);
@@ -29,7 +29,7 @@ export default class ChatController{
   public fetchChat = async(req: Request, res: Response): Promise<void> => {
     try{
       const { user_id } = req.params;
-      console.log(req)
+      // console.log(req)
 
       const chat = await Chat.find({ user_id: user_id });
 
@@ -43,6 +43,26 @@ export default class ChatController{
     catch(e){
       console.log(e);
       res.status(500).send({ message: "Server Error!" });
+    }
+  }
+
+  public updateChat = async(req: Request, res: Response): Promise<void> => {
+    try{
+      const { chat_id, newChatTitle } = req.body;
+      console.log(req)
+
+      const updatedChat = await Chat.updateOne({ _id: chat_id }, { title: newChatTitle });
+      console.log("updated", updatedChat);
+
+      if(!updatedChat.acknowledged){
+        res.status(501).send({ message: "Failed to update the chat" });
+      }
+
+      res.status(200).send({ message: "Successfully updated the chat" });
+    }
+    catch(e){
+      console.log(e);
+      res.status(500).send({ message: "Server Error!!" });
     }
   }
 }
